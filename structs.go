@@ -1,6 +1,6 @@
 package mqttmodule
 
-type PublishMessage struct {
+type MqttMessage struct {
 	Topic string
-	Data  string
+	Data  []byte
 }

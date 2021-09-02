@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -19,11 +20,18 @@ func onConnectHandler(client mqtt.Client) {
 func onMessageHandler(client mqtt.Client, msg mqtt.Message) {
 	topic := msg.Topic()
 	if channel, ok := subscribedChannels[topic]; ok {
-		channel <- msg.Payload()
+		channel <- MqttMessage{Data: msg.Payload(), Topic: topic}
+	} else {
+		// # ile biten subscriptionlar için
+		for k, channel := range subscribedChannels {
+			if k[len(k)-1:] == "#" && strings.Contains(topic, k[:len(k)-1]) {
+				channel <- MqttMessage{Data: msg.Payload(), Topic: topic}
+			}
+		}
 	}
 }
 
-func subscribe(conn mqtt.Client, topic string, channel chan []byte) error {
+func subscribe(conn mqtt.Client, topic string, channel chan MqttMessage) error {
 	if token := conn.Subscribe(topic, 0, nil); token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 		return token.Error()

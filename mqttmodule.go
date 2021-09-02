@@ -4,9 +4,9 @@ import (
 	"errors"
 )
 
-var subscribedChannels map[string]chan []byte = make(map[string]chan []byte)
+var subscribedChannels map[string]chan MqttMessage = make(map[string]chan MqttMessage)
 
-func Subscribe(topics []string, channels []chan []byte) error {
+func Subscribe(topics []string, channels []chan MqttMessage) error {
 
 	if len(topics) != len(channels) {
 		return errors.New("length of channels must be equal to the length of topics")
@@ -23,7 +23,7 @@ func Subscribe(topics []string, channels []chan []byte) error {
 	return nil
 }
 
-func Publish(pm chan PublishMessage) {
+func Publish(pm chan MqttMessage) {
 	conn := connectMqtt()
 
 	for {
