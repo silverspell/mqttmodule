@@ -43,13 +43,13 @@ func subscribe(conn mqtt.Client, topic string, channel chan MqttMessage) error {
 
 func connectMqtt() mqtt.Client {
 	host, err := decodeEnv("MQTT_HOST")
-	failOnError(err, err.Error())
+	failOnError(err, "set MQTT_HOST env")
 	userName, err := decodeEnv("MQTT_USER")
-	failOnError(err, err.Error())
+	failOnError(err, "set MQTT_USER env")
 	clientID, err := decodeEnv("MQTT_CLIENT_ID")
-	failOnError(err, err.Error())
+	failOnError(err, "set MQTT_CLIENT_ID env")
 	password, err := decodeEnv("MQTT_PASS")
-	failOnError(err, err.Error())
+	failOnError(err, "set MQTT_PASS env")
 
 	opts := mqtt.NewClientOptions().AddBroker(host).SetClientID(clientID)
 	opts.Username = userName
