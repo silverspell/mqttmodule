@@ -13,7 +13,7 @@ import (
 func onConnectHandler(client mqtt.Client) {
 	for k, v := range subscribedChannels {
 		err := subscribe(client, k, v)
-		failOnError(err, err.Error())
+		failOnError(err, "Error on subscription")
 	}
 }
 
