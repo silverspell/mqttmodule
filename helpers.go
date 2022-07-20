@@ -23,10 +23,11 @@ func onMessageHandler(client mqtt.Client, msg mqtt.Message) {
 		channel <- MqttMessage{Data: msg.Payload(), Topic: topic}
 	} else {
 		// # ile biten subscriptionlar için
-		for k, channel := range subscribedChannels {
-			if k[len(k)-1:] == "#" && strings.Contains(topic, k[:len(k)-1]) {
-				channel <- MqttMessage{Data: msg.Payload(), Topic: topic}
-			}
+		tempTopic := strings.Split(topic, "/")
+		tempTopic = tempTopic[:len(tempTopic)-1]
+		newTopic := strings.Join(tempTopic, "/") + "/#"
+		if channel, ok := subscribedChannels[newTopic]; ok {
+			channel <- MqttMessage{Data: msg.Payload(), Topic: topic}
 		}
 	}
 }
